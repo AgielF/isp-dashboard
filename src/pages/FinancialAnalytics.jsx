@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from "recharts"
 import StatCard from "../components/StatCard"
 import { fetchRevenue, fetchRevenueByPlan, fetchTopClients, fetchFinancialStats } from "../services/api"
+import { exportPDF, exportExcel, getExportFilename } from "../utils/exportUtils"
 
 function FinancialAnalytics() {
   const [monthlyRevenue, setMonthlyRevenue] = useState([])
@@ -131,7 +132,27 @@ function FinancialAnalytics() {
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
         <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
           <h2 className="text-lg font-bold text-slate-800">Top Pelanggan per Revenue</h2>
-          <span className="text-xs text-slate-400">{topClients.length} pelanggan</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">{topClients.length} pelanggan</span>
+            <div className="relative group">
+              <button className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-2.5 py-1.5 rounded-lg font-medium transition-colors">
+                Export
+              </button>
+              <div className="absolute right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg py-1 z-10 hidden group-hover:block min-w-[120px]">
+                <button onClick={() => {
+                  const fc = (c) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(c)
+                  const headers = ["#", "Pelanggan", "Plan", "Revenue Bulanan", "Total Dibayar"]
+                  const rows = topClients.map((c, i) => [i + 1, c.name, c.plan, fc(c.monthlyRevenue), fc(c.totalPaid)])
+                  exportPDF("Financial Analytics - Top Pelanggan", "ISP Monitoring Dashboard", headers, rows, getExportFilename("financial"))
+                }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Export PDF</button>
+                <button onClick={() => {
+                  const headers = ["#", "Pelanggan", "Plan", "Revenue Bulanan", "Total Dibayar"]
+                  const rows = topClients.map((c, i) => [i + 1, c.name, c.plan, c.monthlyRevenue, c.totalPaid])
+                  exportExcel("Financial", headers, rows, getExportFilename("financial"))
+                }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Export Excel</button>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="overflow-x-auto">

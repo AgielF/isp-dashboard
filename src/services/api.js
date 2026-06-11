@@ -26,6 +26,22 @@ async function apiFetch(path, options = {}) {
   return res.json();
 }
 
+async function apiSend(path, method, body) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method,
+    headers: getHeaders(),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (res.status === 401) {
+    localStorage.removeItem("smyid_token");
+    localStorage.removeItem("smyid_user");
+    window.location.href = "/login";
+    throw new Error("Unauthorized");
+  }
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
 // ---- Auth ----
 export const loginAPI = async (username, password) => {
   const res = await fetch(`${BASE_URL}/auth/login`, {
@@ -44,9 +60,15 @@ export const fetchDashboardStats = () => apiFetch("/dashboard/stats");
 // ---- Routers ----
 export const fetchRouters = () => apiFetch("/routers");
 export const fetchRouterDetail = (id) => apiFetch(`/routers/${id}`);
+export const createRouter = (data) => apiSend("/routers", "POST", data);
+export const updateRouter = (id, data) => apiSend(`/routers/${id}`, "PUT", data);
+export const deleteRouter = (id) => apiSend(`/routers/${id}`, "DELETE");
 
 // ---- Clients ----
 export const fetchClients = () => apiFetch("/clients");
+export const createClient = (data) => apiSend("/clients", "POST", data);
+export const updateClient = (id, data) => apiSend(`/clients/${id}`, "PUT", data);
+export const deleteClient = (id) => apiSend(`/clients/${id}`, "DELETE");
 
 // ---- Bandwidth ----
 export const fetchBandwidthHistory = () => apiFetch("/bandwidth/history");
@@ -60,6 +82,9 @@ export const acknowledgeAlert = (id) =>
 // ---- Billing ----
 export const fetchInvoices = () => apiFetch("/billing");
 export const fetchBillingStats = () => apiFetch("/billing/stats");
+export const createInvoice = (data) => apiSend("/billing", "POST", data);
+export const updateInvoice = (id, data) => apiSend(`/billing/${id}`, "PUT", data);
+export const deleteInvoice = (id) => apiSend(`/billing/${id}`, "DELETE");
 
 // ---- Financial ----
 export const fetchRevenue = () => apiFetch("/financial/revenue");
@@ -74,6 +99,12 @@ export const fetchMonthlyData = (category) => apiFetch(`/smyid/monthly/${categor
 
 // ---- Installations ----
 export const fetchInstallations = () => apiFetch("/installations");
+export const createInstallation = (data) => apiSend("/installations", "POST", data);
+export const updateInstallation = (id, data) => apiSend(`/installations/${id}`, "PUT", data);
+export const deleteInstallation = (id) => apiSend(`/installations/${id}`, "DELETE");
 
 // ---- Maintenance ----
 export const fetchMaintenanceLogs = () => apiFetch("/maintenance");
+export const createMaintenance = (data) => apiSend("/maintenance", "POST", data);
+export const updateMaintenance = (id, data) => apiSend(`/maintenance/${id}`, "PUT", data);
+export const deleteMaintenance = (id) => apiSend(`/maintenance/${id}`, "DELETE");

@@ -5,6 +5,8 @@ import Navbar from "./components/navbar"
 import Sidebar from "./components/Sidebar"
 import LoginPage from "./pages/LoginPage"
 import Dashboard from "./pages/Dashboard"
+import RoutersPage from "./pages/RoutersPage"
+import ClientsPage from "./pages/ClientsPage"
 import Installations from "./pages/Installations"
 import MaintenancePage from "./pages/MaintenancePage"
 import Billing from "./pages/Billing"
@@ -28,6 +30,8 @@ function App() {
                   <main className="flex-1 p-6">
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
+                      <Route path="/routers" element={<RoutersPage />} />
+                      <Route path="/clients" element={<ClientsPage />} />
                       <Route path="/installations" element={<Installations />} />
                       <Route path="/maintenance" element={<MaintenancePage />} />
                       <Route path="/billing" element={<Billing />} />
