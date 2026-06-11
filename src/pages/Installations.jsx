@@ -4,10 +4,12 @@ import Modal from "../components/Modal"
 import StatCard from "../components/StatCard"
 import { fetchSMYOverview, fetchSiteSummary, fetchMonthlyData, fetchInstallations, createInstallation, updateInstallation, deleteInstallation } from "../services/api"
 import { exportPDF, exportExcel, getExportFilename } from "../utils/exportUtils"
+import { useCan } from "../hooks/useCan"
 
 const emptyForm = { clientName: "", address: "", plan: "", technician: "", status: "pending", scheduledDate: "", completedDate: "", notes: "" }
 
 function Installations() {
+  const { can } = useCan()
   const [stats, setStats] = useState(null)
   const [siteCumulative, setSiteCumulative] = useState([])
   const [siteCurrent, setSiteCurrent] = useState([])
@@ -245,10 +247,12 @@ function Installations() {
                 }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Export Excel</button>
               </div>
             </div>
-            <button onClick={openAdd}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
-              + Tambah Instalasi
-            </button>
+            {can("installations", "create") && (
+              <button onClick={openAdd}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
+                + Tambah Instalasi
+              </button>
+            )}
           </div>
         </div>
 
@@ -278,8 +282,12 @@ function Installations() {
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-center gap-1">
-                      <button onClick={() => openEdit(inst)} className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">Edit</button>
-                      <button onClick={() => setDeleteId(inst.id)} className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">Hapus</button>
+                      {can("installations", "update") && (
+                        <button onClick={() => openEdit(inst)} className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">Edit</button>
+                      )}
+                      {can("installations", "delete") && (
+                        <button onClick={() => setDeleteId(inst.id)} className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">Hapus</button>
+                      )}
                     </div>
                   </td>
                 </tr>

@@ -3,10 +3,12 @@ import Modal from "../components/Modal"
 import StatCard from "../components/StatCard"
 import { fetchInvoices, fetchBillingStats, createInvoice, updateInvoice, deleteInvoice } from "../services/api"
 import { exportPDF, exportExcel, getExportFilename } from "../utils/exportUtils"
+import { useCan } from "../hooks/useCan"
 
 const emptyForm = { id: "", client: "", plan: "", amount: 0, status: "unpaid", issueDate: "", dueDate: "", paidDate: "", period: "" }
 
 function Billing() {
+  const { can } = useCan()
   const [invoices, setInvoices] = useState([])
   const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -168,10 +170,12 @@ function Billing() {
                 }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Export Excel</button>
               </div>
             </div>
-            <button onClick={openAdd}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
-              + Tambah Invoice
-            </button>
+            {can("billing", "create") && (
+              <button onClick={openAdd}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
+                + Tambah Invoice
+              </button>
+            )}
           </div>
         </div>
 
@@ -205,14 +209,18 @@ function Billing() {
                   <td className="px-5 py-3 text-xs text-slate-500">{formatDate(inv.paidDate)}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-center gap-1">
-                      <button onClick={() => openEdit(inv)}
-                        className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">
-                        Edit
-                      </button>
-                      <button onClick={() => setDeleteId(inv.id)}
-                        className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">
-                        Hapus
-                      </button>
+                      {can("billing", "update") && (
+                        <button onClick={() => openEdit(inv)}
+                          className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                          Edit
+                        </button>
+                      )}
+                      {can("billing", "delete") && (
+                        <button onClick={() => setDeleteId(inv.id)}
+                          className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">
+                          Hapus
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

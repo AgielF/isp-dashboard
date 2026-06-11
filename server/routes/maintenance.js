@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import pool from '../db/pool.js';
-import auth from '../middleware/auth.js';
+import auth, { requireRole } from '../middleware/auth.js';
 import { toMaintenance } from '../utils.js';
 
 const router = Router();
@@ -15,7 +15,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, requireRole('admin', 'operator'), async (req, res) => {
   try {
     const { routerName, type, description, technician, status, startDate, endDate, duration } = req.body;
     const result = await pool.query(
@@ -30,7 +30,7 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-router.put('/:id', auth, async (req, res) => {
+router.put('/:id', auth, requireRole('admin', 'operator', 'technician'), async (req, res) => {
   try {
     const { routerName, type, description, technician, status, startDate, endDate, duration } = req.body;
     const result = await pool.query(
@@ -46,7 +46,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth, requireRole('admin'), async (req, res) => {
   try {
     const result = await pool.query('DELETE FROM maintenance_logs WHERE id = $1 RETURNING id', [req.params.id]);
     if (result.rowCount === 0) return res.status(404).json({ message: 'Maintenance log not found' });

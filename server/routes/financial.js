@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import pool from '../db/pool.js';
-import auth from '../middleware/auth.js';
+import auth, { requireRole } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/revenue', auth, async (req, res) => {
+router.get('/revenue', auth, requireRole('admin', 'finance'), async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM monthly_revenue ORDER BY id');
     res.json(result.rows.map(r => ({
@@ -18,7 +18,7 @@ router.get('/revenue', auth, async (req, res) => {
   }
 });
 
-router.get('/by-plan', auth, async (req, res) => {
+router.get('/by-plan', auth, requireRole('admin', 'finance'), async (req, res) => {
   try {
     // Aggregate revenue from invoices grouped by plan
     const result = await pool.query(`
@@ -37,7 +37,7 @@ router.get('/by-plan', auth, async (req, res) => {
   }
 });
 
-router.get('/top-clients', auth, async (req, res) => {
+router.get('/top-clients', auth, requireRole('admin', 'finance'), async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT client_name, plan,
@@ -59,7 +59,7 @@ router.get('/top-clients', auth, async (req, res) => {
   }
 });
 
-router.get('/stats', auth, async (req, res) => {
+router.get('/stats', auth, requireRole('admin', 'finance'), async (req, res) => {
   try {
     const revenueResult = await pool.query('SELECT * FROM monthly_revenue ORDER BY id');
     const rows = revenueResult.rows;

@@ -71,21 +71,28 @@ async function initDatabase() {
     await dbClient.query(seedSQL);
     console.log('Seed data inserted.');
 
-    // Insert admin user with bcrypt hash
-    console.log('Creating admin user...');
-    const existingAdmin = await dbClient.query(
-      "SELECT id FROM users WHERE username = 'admin'"
-    );
+    // Insert users with different roles
+    const users = [
+      { username: 'admin', password: 'admin123', role: 'admin' },
+      { username: 'operator', password: 'operator123', role: 'operator' },
+      { username: 'finance', password: 'finance123', role: 'finance' },
+      { username: 'teknisi', password: 'teknisi123', role: 'technician' },
+    ];
 
-    if (existingAdmin.rowCount === 0) {
-      const hash = await bcrypt.hash('admin123', 10);
-      await dbClient.query(
-        "INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)",
-        ['admin', hash, 'admin']
+    for (const u of users) {
+      const existing = await dbClient.query(
+        'SELECT id FROM users WHERE username = $1', [u.username]
       );
-      console.log('Admin user created (admin / admin123)');
-    } else {
-      console.log('Admin user already exists.');
+      if (existing.rowCount === 0) {
+        const hash = await bcrypt.hash(u.password, 10);
+        await dbClient.query(
+          "INSERT INTO users (username, password_hash, role) VALUES ($1, $2, $3)",
+          [u.username, hash, u.role]
+        );
+        console.log(`User created: ${u.username} / ${u.password} (${u.role})`);
+      } else {
+        console.log(`User '${u.username}' already exists.`);
+      }
     }
 
     console.log('\nDatabase initialization complete!');

@@ -3,10 +3,12 @@ import Modal from "../components/Modal"
 import StatCard from "../components/StatCard"
 import { fetchRouters, createRouter, updateRouter, deleteRouter } from "../services/api"
 import { exportPDF, exportExcel, getExportFilename } from "../utils/exportUtils"
+import { useCan } from "../hooks/useCan"
 
 const emptyForm = { name: "", location: "", ip: "", status: "online", cpu: 0, memory: 0, uptime: "0d 0h 0m", trafficIn: 0, trafficOut: 0 }
 
 function RoutersPage() {
+  const { can } = useCan()
   const [routers, setRouters] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
@@ -157,10 +159,12 @@ function RoutersPage() {
                 <button onClick={handleExportExcel} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Export Excel</button>
               </div>
             </div>
-            <button onClick={openAdd}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
-              + Tambah Router
-            </button>
+            {can("routers", "create") && (
+              <button onClick={openAdd}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
+                + Tambah Router
+              </button>
+            )}
           </div>
         </div>
 
@@ -201,14 +205,18 @@ function RoutersPage() {
                   <td className="px-5 py-3 text-xs text-slate-500">{router.uptime}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-center gap-1">
-                      <button onClick={() => openEdit(router)}
-                        className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">
-                        Edit
-                      </button>
-                      <button onClick={() => setDeleteId(router.id)}
-                        className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">
-                        Hapus
-                      </button>
+                      {can("routers", "update") && (
+                        <button onClick={() => openEdit(router)}
+                          className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">
+                          Edit
+                        </button>
+                      )}
+                      {can("routers", "delete") && (
+                        <button onClick={() => setDeleteId(router.id)}
+                          className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">
+                          Hapus
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>

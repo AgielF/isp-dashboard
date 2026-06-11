@@ -4,10 +4,12 @@ import Modal from "../components/Modal"
 import StatCard from "../components/StatCard"
 import { fetchSMYOverview, fetchSiteSummary, fetchMonthlyData, fetchMaintenanceLogs, createMaintenance, updateMaintenance, deleteMaintenance } from "../services/api"
 import { exportPDF, exportExcel, getExportFilename } from "../utils/exportUtils"
+import { useCan } from "../hooks/useCan"
 
 const emptyForm = { routerName: "", type: "preventive", description: "", technician: "", status: "scheduled", startDate: "", endDate: "", duration: "" }
 
 function MaintenancePage() {
+  const { can } = useCan()
   const [stats, setStats] = useState(null)
   const [siteCumulative, setSiteCumulative] = useState([])
   const [siteCurrent, setSiteCurrent] = useState([])
@@ -254,10 +256,12 @@ function MaintenancePage() {
                 }} className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Export Excel</button>
               </div>
             </div>
-            <button onClick={openAdd}
-              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
-              + Tambah Maintenance
-            </button>
+            {can("maintenance", "create") && (
+              <button onClick={openAdd}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap">
+                + Tambah Maintenance
+              </button>
+            )}
           </div>
         </div>
 
@@ -289,8 +293,12 @@ function MaintenancePage() {
                   <td className="px-5 py-3 text-xs text-slate-500">{log.duration || "-"}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center justify-center gap-1">
-                      <button onClick={() => openEdit(log)} className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">Edit</button>
-                      <button onClick={() => setDeleteId(log.id)} className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">Hapus</button>
+                      {can("maintenance", "update") && (
+                        <button onClick={() => openEdit(log)} className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 rounded hover:bg-blue-50 transition-colors">Edit</button>
+                      )}
+                      {can("maintenance", "delete") && (
+                        <button onClick={() => setDeleteId(log.id)} className="text-red-600 hover:text-red-800 text-xs px-2 py-1 rounded hover:bg-red-50 transition-colors">Hapus</button>
+                      )}
                     </div>
                   </td>
                 </tr>

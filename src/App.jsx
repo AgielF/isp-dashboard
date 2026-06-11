@@ -1,6 +1,8 @@
+import { useState } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import ProtectedRoute from "./components/ProtectedRoute"
+import RoleRoute from "./components/RoleRoute"
 import Navbar from "./components/navbar"
 import Sidebar from "./components/Sidebar"
 import LoginPage from "./pages/LoginPage"
@@ -13,6 +15,8 @@ import Billing from "./pages/Billing"
 import FinancialAnalytics from "./pages/FinancialAnalytics"
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -24,18 +28,18 @@ function App() {
           <Route path="/*" element={
             <ProtectedRoute>
               <div className="min-h-screen bg-slate-100">
-                <Navbar />
+                <Navbar onMenuToggle={() => setSidebarOpen(prev => !prev)} />
                 <div className="flex">
-                  <Sidebar />
-                  <main className="flex-1 p-6">
+                  <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+                  <main className="flex-1 p-4 sm:p-6 min-w-0">
                     <Routes>
                       <Route path="/" element={<Dashboard />} />
-                      <Route path="/routers" element={<RoutersPage />} />
-                      <Route path="/clients" element={<ClientsPage />} />
-                      <Route path="/installations" element={<Installations />} />
-                      <Route path="/maintenance" element={<MaintenancePage />} />
-                      <Route path="/billing" element={<Billing />} />
-                      <Route path="/financial" element={<FinancialAnalytics />} />
+                      <Route path="/routers" element={<RoleRoute module="routers"><RoutersPage /></RoleRoute>} />
+                      <Route path="/clients" element={<RoleRoute module="clients"><ClientsPage /></RoleRoute>} />
+                      <Route path="/installations" element={<RoleRoute module="installations"><Installations /></RoleRoute>} />
+                      <Route path="/maintenance" element={<RoleRoute module="maintenance"><MaintenancePage /></RoleRoute>} />
+                      <Route path="/billing" element={<RoleRoute module="billing"><Billing /></RoleRoute>} />
+                      <Route path="/financial" element={<RoleRoute module="financial"><FinancialAnalytics /></RoleRoute>} />
                     </Routes>
                   </main>
                 </div>
