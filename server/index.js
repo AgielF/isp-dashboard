@@ -19,6 +19,7 @@ import financialRoutes from './routes/financial.js';
 import bandwidthRoutes from './routes/bandwidth.js';
 import alertRoutes from './routes/alerts.js';
 import smyidRoutes from './routes/smyid.js';
+import weatherAnalyticsRoutes from './routes/weather-analytics.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -40,6 +41,7 @@ app.use('/api/financial', financialRoutes);
 app.use('/api/bandwidth', bandwidthRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/smyid', smyidRoutes);
+app.use('/api/weather-analytics', weatherAnalyticsRoutes);
 
 // Global error handler
 app.use((err, req, res, next) => {

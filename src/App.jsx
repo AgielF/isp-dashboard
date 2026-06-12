@@ -13,6 +13,7 @@ import Installations from "./pages/Installations"
 import MaintenancePage from "./pages/MaintenancePage"
 import Billing from "./pages/Billing"
 import FinancialAnalytics from "./pages/FinancialAnalytics"
+import WeatherAnalytics from "./pages/WeatherAnalytics"
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -40,6 +41,7 @@ function App() {
                       <Route path="/maintenance" element={<RoleRoute module="maintenance"><MaintenancePage /></RoleRoute>} />
                       <Route path="/billing" element={<RoleRoute module="billing"><Billing /></RoleRoute>} />
                       <Route path="/financial" element={<RoleRoute module="financial"><FinancialAnalytics /></RoleRoute>} />
+                      <Route path="/weather" element={<RoleRoute module="financial"><WeatherAnalytics /></RoleRoute>} />
                     </Routes>
                   </main>
                 </div>

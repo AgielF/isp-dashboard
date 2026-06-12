@@ -8,7 +8,8 @@ const allNavItems = [
   { to: "/installations", label: "Pemasangan Baru", icon: "🔌", roles: ["admin", "operator", "technician"] },
   { to: "/maintenance", label: "Maintenance", icon: "🔧", roles: ["admin", "operator", "technician"] },
   { to: "/billing", label: "Billing", icon: "💳", roles: ["admin", "finance"] },
-  { to: "/financial", label: "Financial Analytics", icon: "📈", roles: ["admin", "finance"] }
+  { to: "/financial", label: "Financial Analytics", icon: "📈", roles: ["admin", "finance"] },
+  { to: "/weather", label: "Analisis Cuaca", icon: "🌩️", roles: ["admin", "finance", "operator"] }
 ]
 
 function Sidebar({ isOpen, onClose }) {

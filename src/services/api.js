@@ -108,3 +108,8 @@ export const fetchMaintenanceLogs = () => apiFetch("/maintenance");
 export const createMaintenance = (data) => apiSend("/maintenance", "POST", data);
 export const updateMaintenance = (id, data) => apiSend(`/maintenance/${id}`, "PUT", data);
 export const deleteMaintenance = (id) => apiSend(`/maintenance/${id}`, "DELETE");
+
+
+
+// ---- Weather Analytics ----
+export const fetchWeatherCorrelation = () => apiFetch("/weather-analytics/correlation");
